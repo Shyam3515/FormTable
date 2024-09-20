@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Employee Details</title>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Employee Details</h1>
+
+    <form id="details">
+      <div>
+        <label for="fname">FirstName: </label>
+        <input type="text" id="fname" placeholder="FirstName" />
+      </div>
+      <div>
+        <label for="lname">LastName: </label>
+        <input type="text" id="lname" placeholder="LastName" />
+      </div>
+      <div>
+        <label for="designation">Designation: </label>
+        <input type="text" id="designation" placeholder="Designation" />
+      </div>
+      <div>
+        <label for="area">Address: </label>
+        <textarea id="area" placeholder="Enter Address..."></textarea>
+      </div>
+      <br />
+
+      <button type="button" id="add">Add</button>
+      <button type="button" id="save">Save</button>
+    </form>
+
+    <!-- table -->
+    <table id="table">
+      <thead>
+        <tr>
+          <th><input type="checkbox" id="checkAll" /> Select</th>
+          <th>FirstName</th>
+          <th>LastName</th>
+          <th>designation</th>
+          <th>Address</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- No predefined rows -->
+      </tbody>
+    </table>
+
+    <button type="button" id="deleteSelectedBtn">Delete Selected</button>
+
+    <script src="script.js"></script>
+  </body>
+</html>
