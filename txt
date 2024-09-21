@@ -2,9 +2,6 @@ const add = document.querySelector("#add");
 const save = document.querySelector("#save");
 let tableData = [];
 let currentRow = null; //storing current row
-const tableBody = document
-  .getElementById("table")
-  .getElementsByTagName("tbody")[0];
 
 function populateInputs(cells) {
   document.getElementById("fname").value = cells[1].textContent;
@@ -13,8 +10,11 @@ function populateInputs(cells) {
   document.getElementById("area").value = cells[4].textContent;
 }
 
-//render data in table
 function renderTable() {
+  const tableBody = document
+    .getElementById("table")
+    .getElementsByTagName("tbody")[0];
+  console.log(tableBody);
   tableBody.innerHTML = ""; // Clear existing rows
   console.log("Table Data :", tableData);
 
@@ -46,20 +46,6 @@ function renderTable() {
       tableData.splice(index, 1);
       renderTable(); //Re-render table data
     });
-
-    //checkbox property, aading into object
-    let checks = document.getElementsByClassName("row-checkbox");
-    Array.from(checks).forEach((element, index) => {
-      tableData[index].ischecked = element.checked;
-    });
-
-    //updating checks on click
-    Array.from(checks).forEach((element, index) => {
-      element.addEventListener("click", () => {
-        tableData[index].ischecked = element.checked;
-        console.log(tableData);
-      });
-    });
   });
 }
 
@@ -72,10 +58,10 @@ function addData() {
   const desig = document.getElementById("designation").value;
   const area = document.getElementById("area").value;
 
-  // if (!fName || !lName || !desig || !area) {
-  //   alert("Please fill in all fields.");
-  //   return;
-  // }
+  if (!fName || !lName || !desig || !area) {
+    alert("Please fill in all fields.");
+    return;
+  }
 
   tableData.push({ fName, lName, desig, area });
 
@@ -86,6 +72,7 @@ function addData() {
 
 //update
 document.getElementById("save").addEventListener("click", function () {
+  console.log("click", currentRow);
   if (currentRow !== null) {
     // Update the data in the array
     tableData[currentRow] = {
@@ -104,6 +91,27 @@ document.getElementById("save").addEventListener("click", function () {
     add.style.display = "block";
   }
 });
+
+// Delete selected rows button event listener
+/**
+ * Filtering Logic:
+   Inside the event listener, we use the filter method on the tableData array. The goal is to create a new array that contains only the rows that are not checked:
+
+   Here’s how this works:
+  => document.querySelector(.row-checkbox[data-index="${index}"]): This selects the checkbox in the current row being evaluated. The data-index attribute helps us identify which checkbox corresponds to which row in the tableData.
+  => .checked: This property returns true if the checkbox is checked and false if it is not.
+  => !: The ! operator negates the value, so if the checkbox is checked (true), it returns false, and vice versa.
+ */
+document
+  .getElementById("deleteSelectedBtn")
+  .addEventListener("click", function () {
+    // Filter out the unchecked rows
+    tableData = tableData.filter(
+      (_, index) =>
+        !document.querySelector(`.row-checkbox[data-index="${index}"]`).checked
+    );
+    renderTable(); // Re-render the table
+  });
 
 /**
 }
@@ -124,9 +132,8 @@ function toggle() {
   const isChecked = checkAll.checked;
   let checks = document.getElementsByClassName("row-checkbox");
 
-  Array.from(checks).forEach((element, index) => {
+  Array.from(checks).forEach((element) => {
     element.checked = isChecked;
-    tableData[index].ischecked = element.checked;
   });
 }
 
@@ -138,18 +145,3 @@ function uncheckAllElement() {
 function checkAllElement() {
   checkAll.checked = true;
 }
-
-document
-  .getElementById("deleteSelectedBtn")
-  .addEventListener("click", function () {
-    // Filter out the unchecked rows
-    tableData = tableData.filter(
-      (_, index) => tableData[index].ischecked === false
-    );
-
-    renderTable(); // Re-render the table
-
-    if (tableBody.rows.length === 0) {
-      checkAll.checked = false;
-    }
-  });
