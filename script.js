@@ -1,16 +1,17 @@
 const add = document.querySelector("#add");
 const save = document.querySelector("#save");
 let tableData = [];
-let currentRow = null; //storing current row
+let currentRow = null; //for storing index
+
 const tableBody = document
   .getElementById("table")
   .getElementsByTagName("tbody")[0];
 
-function populateInputs(cells) {
-  document.getElementById("fname").value = cells[1].textContent;
-  document.getElementById("lname").value = cells[2].textContent;
-  document.getElementById("designation").value = cells[3].textContent;
-  document.getElementById("area").value = cells[4].textContent;
+function populateInputs(index) {
+  document.getElementById("fname").value = tableData[index].fName;
+  document.getElementById("lname").value = tableData[index].lName;
+  document.getElementById("designation").value = tableData[index].desig;
+  document.getElementById("area").value = tableData[index].area;
 }
 
 //render data in table
@@ -24,7 +25,7 @@ function renderTable() {
     let newRow = tableBody.insertRow();
     newRow.insertCell(
       0
-    ).innerHTML = `<input type="checkbox" class="row-checkbox" onclick="uncheckAllElement()" data-index="${index}"/>`;
+    ).innerHTML = `<input type="checkbox" class="row-checkbox" onChange="uncheckAllElement(this)" data-index="${index}"/>`;
     newRow.insertCell(1).innerHTML = data.fName;
     newRow.insertCell(2).innerHTML = data.lName;
     newRow.insertCell(3).innerHTML = data.desig;
@@ -37,28 +38,14 @@ function renderTable() {
     newRow.querySelector(".edit-btn").addEventListener("click", function () {
       save.style.display = "block";
       add.style.display = "none";
-      currentRow = index; // Store the index of the current row
-      populateInputs(newRow.cells);
+      currentRow = index;
+      populateInputs(currentRow);
     });
 
     //Add event listener to the delete button
     newRow.querySelector(".delete-btn").addEventListener("click", () => {
       tableData.splice(index, 1);
       renderTable(); //Re-render table data
-    });
-
-    //checkbox property, aading into object
-    let checks = document.getElementsByClassName("row-checkbox");
-    Array.from(checks).forEach((element, index) => {
-      tableData[index].ischecked = element.checked;
-    });
-
-    //updating checks on click
-    Array.from(checks).forEach((element, index) => {
-      element.addEventListener("click", () => {
-        tableData[index].ischecked = element.checked;
-        console.log(tableData);
-      });
     });
   });
 }
@@ -72,12 +59,12 @@ function addData() {
   const desig = document.getElementById("designation").value;
   const area = document.getElementById("area").value;
 
-  // if (!fName || !lName || !desig || !area) {
-  //   alert("Please fill in all fields.");
-  //   return;
-  // }
+  if (!fName || !lName || !desig || !area) {
+    alert("Please fill in all fields.");
+    return;
+  }
 
-  tableData.push({ fName, lName, desig, area });
+  tableData.push({ isChecked: false, fName, lName, desig, area });
 
   renderTable(); // Render the updated table
   // After inserting we,Clear input fields
@@ -121,19 +108,22 @@ function clearInputs() {
 const checkAll = document.getElementById("checkAll");
 checkAll.addEventListener("click", toggle);
 function toggle() {
-  const isChecked = checkAll.checked;
+  const ischecked = checkAll.checked;
   let checks = document.getElementsByClassName("row-checkbox");
 
   Array.from(checks).forEach((element, index) => {
-    element.checked = isChecked;
-    tableData[index].ischecked = element.checked;
+    element.checked = ischecked;
+    tableData[index].isChecked = element.checked;
   });
 }
 
 //if any element is unchecked then this function will be called unchecks checkAllElement
-function uncheckAllElement() {
-  checkAll.checked = false;
+function uncheckAllElement(ele) {
+  let index = parseInt(ele.getAttribute("data-index"));
+  tableData[index].isChecked = ele.checked;
+  // console.log(tableData);
 }
+
 //similarly, we can try for check
 function checkAllElement() {
   checkAll.checked = true;
@@ -144,8 +134,9 @@ document
   .addEventListener("click", function () {
     // Filter out the unchecked rows
     tableData = tableData.filter(
-      (_, index) => tableData[index].ischecked === false
+      (_, index) => tableData[index].isChecked === false
     );
+    console.log(tableData);
 
     renderTable(); // Re-render the table
 
