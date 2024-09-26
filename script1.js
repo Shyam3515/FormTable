@@ -4,7 +4,17 @@ let currentRow = null; //for storing index
 
 // Array containing the table headers (excluding the first checkbox column)
 let tableJSON = [
-  { headers: ["First Name", "Last Name", "Designation", "Address", "Action"] },
+  {
+    headers: [
+      {
+        fName: "First Name",
+        lName: "Last Name",
+        desig: "Designation",
+        area: "Address",
+        action: "Action",
+      },
+    ],
+  },
   { data: [] },
 ];
 
@@ -14,17 +24,16 @@ const clearButton = document.querySelector(".clear-button");
 //get the dopdown
 const dropdown = document.getElementById("headers");
 // Loop through the array and add each option to the dropdown
-// let tableKeys;
-// let keysArray;
-// tableKeys = tableJSON[1].data[0];
-// keysArray = Object.keys(tableKeys);
-// const dropHeaders = tableJSON[0].headers;
-// for (let i = 0; i < dropHeaders.length - 1; i++) {
-//   const option = document.createElement("option");
-//   option.text = tableJSON[0].headers[i];
-//   // option.value = keysArray[i + 1]; // Set the value as lowercase version of the fruit name
-//   dropdown.add(option); //u can use appendChild
-// }
+let tableKeys = tableJSON[0].headers[0];
+let keysArray = Object.keys(tableKeys);
+const dropHeaders = tableJSON[0].headers[0];
+// console.log(keysArray, dropHeaders);
+for (let i = 0; i < keysArray.length - 1; i++) {
+  const option = document.createElement("option");
+  option.text = dropHeaders[keysArray[i]];
+  option.value = keysArray[i]; // Set the value as lowercase version of the fruit name
+  dropdown.add(option); //u can use appendChild
+}
 
 //get the table
 const table = document.getElementById("table");
@@ -43,17 +52,15 @@ function generateTable(table) {
 
   //create Text
   const headercheckboxText = document.createTextNode("Select All");
-
   checkboxLabel.appendChild(headercheckbox);
   checkboxLabel.appendChild(headercheckboxText);
-
   checkboxheader.appendChild(checkboxLabel);
   headerRow.appendChild(checkboxheader);
 
   // Loop through the headers array to create and append each header cell
-  tableJSON[0].headers.forEach((header) => {
+  keysArray.forEach((key) => {
     const th = document.createElement("th");
-    th.textContent = header;
+    th.textContent = dropHeaders[key];
     headerRow.appendChild(th);
   });
 
@@ -97,7 +104,6 @@ function renderTable() {
   // Insert data into cells of the new row
   tableJSON[1].data.forEach((data, index) => {
     /**=> You're correct that in the current approach, the text is not explicitly contained within a separate container element inside the cell. When we set firstNameCell.textContent = data.fName;, the text is treated as a "text node" (a child of the td element). Every td element can contain text directly as a child node without needing an explicit wrapper like a <span> or <div>.
-
     => To address your concern and make things clearer, we can wrap the text in a container element like a span. This way, the text and input can be more explicitly separated and managed. Let's modify the code to wrap the text inside a span element. */
 
     // Create an empty <tr> element and add it to the 1st position of the table:
@@ -250,10 +256,10 @@ function addData() {
   const desig = document.getElementById("designation").value;
   const area = document.getElementById("area").value;
 
-  // if (!fName || !lName || !desig || !area) {
-  //   alert("Please fill in all fields.");
-  //   return;
-  // }
+  if (!fName || !lName || !desig || !area) {
+    alert("Please fill in all fields.");
+    return;
+  }
 
   tableJSON[1].data.push({ isChecked: false, fName, lName, desig, area });
 
